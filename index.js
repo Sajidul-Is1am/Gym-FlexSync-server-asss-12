@@ -36,6 +36,7 @@ async function run() {
         // Send a ping to confirm a successful connection
 
         const UserCollection = client.db("UserCollection").collection("user");
+        const UserSubscriber = client.db("UserCollection").collection("subscribe");
 
 
         app.post('/user', async (req, res) => {
@@ -43,6 +44,12 @@ async function run() {
             const resuls = await UserCollection.insertOne(userInfo)
             res.send(resuls)
         })
+        app.post('/user/subscriber', async (req, res) => {
+            const subscriberInfo = req.body;
+            const resuls = await UserSubscriber.insertOne(subscriberInfo)
+            res.send(resuls)
+        })
+
 
 
 
