@@ -37,6 +37,7 @@ async function run() {
 
         const UserCollection = client.db("UserCollection").collection("user");
         const UserSubscriber = client.db("UserCollection").collection("subscribe");
+        const TrainerProfile = client.db("UserCollection").collection("trainerProfile");
 
 
         app.post('/user', async (req, res) => {
@@ -48,6 +49,14 @@ async function run() {
             const subscriberInfo = req.body;
             const resuls = await UserSubscriber.insertOne(subscriberInfo)
             res.send(resuls)
+        })
+
+
+
+
+        app.get('/user/trainerprofile', async (req, res) => {
+            const resuls = await TrainerProfile.find().toArray();
+            res.send(resuls);
         })
 
 
