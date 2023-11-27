@@ -4,7 +4,8 @@ const cors = require('cors');
 const app = express()
 const {
     MongoClient,
-    ServerApiVersion
+    ServerApiVersion,
+    ObjectId
 } = require('mongodb');
 const port = process.env.PORT || 5000
 
@@ -38,24 +39,59 @@ async function run() {
         const UserCollection = client.db("UserCollection").collection("user");
         const UserSubscriber = client.db("UserCollection").collection("subscribe");
         const TrainerProfile = client.db("UserCollection").collection("trainerProfile");
+        const ApplyedTrainer = client.db("UserCollection").collection("appledTrainer");
 
 
         app.post('/user', async (req, res) => {
             const userInfo = req.body;
-            const resuls = await UserCollection.insertOne(userInfo)
+            const resuls = await UserCollection.insertOne(userInfo);
             res.send(resuls)
         })
         app.post('/user/subscriber', async (req, res) => {
             const subscriberInfo = req.body;
-            const resuls = await UserSubscriber.insertOne(subscriberInfo)
+            const resuls = await UserSubscriber.insertOne(subscriberInfo);
             res.send(resuls)
         })
+        app.put('/user/applytrainer', async (req, res) => {
+            const email = req.query.email;
+            const filter = {
+                email: email
+            }
+            const applyerInfo = req.body;
+            const options = {
+                upsert: true
+            };
+            const updateDoc = {
+                $set: {
+                    fullname:applyerInfo.fullname,
+                    email:applyerInfo.email,
+                    age:applyerInfo.age,
+                    others:applyerInfo.others,
+                    week:applyerInfo.week,
+                    day:applyerInfo.day,
+                    skill:applyerInfo.skill,
+                    image:applyerInfo.image,
+                },
+            };
+            const resuls = await ApplyedTrainer.updateOne(filter,updateDoc,options);
+            res.send(resuls)
+        })
+
 
 
 
 
         app.get('/user/trainerprofile', async (req, res) => {
             const resuls = await TrainerProfile.find().toArray();
+            res.send(resuls);
+        })
+
+        app.get('/user/trainerprofile/:id', async (req, res) => {
+            const id = req.params.id
+            const query = {
+                _id: new ObjectId(id)
+            }
+            const resuls = await TrainerProfile.findOne(query);
             res.send(resuls);
         })
 
