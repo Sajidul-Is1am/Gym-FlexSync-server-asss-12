@@ -42,6 +42,7 @@ async function run() {
         const ApplyedTrainer = client.db("UserCollection").collection("appledTrainer");
         const PackagePlans = client.db("UserCollection").collection("package");
         const UserSelectedPack = client.db("UserCollection").collection("userSelectedPack");
+        const ClassesCollection = client.db("UserCollection").collection("Classes");
 
 
         app.post('/user', async (req, res) => {
@@ -54,11 +55,7 @@ async function run() {
             const resuls = await UserSubscriber.insertOne(subscriberInfo);
             res.send(resuls)
         })
-        // app.post('/user/selectedpack', async(req,res) => {
-        //     const seletedInfo = req.body;
-        //     const resuls = await UserSelectedPack.insertOne(seletedInfo);
-        //     res.send(resuls)
-        // })
+     
 
 
 
@@ -81,10 +78,20 @@ async function run() {
             const result = await PackagePlans.find().toArray();
             res.send(result)
         })
+        app.get('/classes', async (req, res) => {
+            const resuls = await ClassesCollection.find().toArray();
+            res.send(resuls)
+        })
+        app.get('/classes/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id : new ObjectId(id)}
+            const resuls = await ClassesCollection.findOne(query)
+            res.send(resuls)
+        })
 
 
 
-
+        
         app.put('/user/applytrainer', async (req, res) => {
             const email = req.query.email;
             const filter = {
