@@ -40,6 +40,8 @@ async function run() {
         const UserSubscriber = client.db("UserCollection").collection("subscribe");
         const TrainerProfile = client.db("UserCollection").collection("trainerProfile");
         const ApplyedTrainer = client.db("UserCollection").collection("appledTrainer");
+        const PackagePlans = client.db("UserCollection").collection("package");
+        const UserSelectedPack = client.db("UserCollection").collection("userSelectedPack");
 
 
         app.post('/user', async (req, res) => {
@@ -52,30 +54,11 @@ async function run() {
             const resuls = await UserSubscriber.insertOne(subscriberInfo);
             res.send(resuls)
         })
-        app.put('/user/applytrainer', async (req, res) => {
-            const email = req.query.email;
-            const filter = {
-                email: email
-            }
-            const applyerInfo = req.body;
-            const options = {
-                upsert: true
-            };
-            const updateDoc = {
-                $set: {
-                    fullname:applyerInfo.fullname,
-                    email:applyerInfo.email,
-                    age:applyerInfo.age,
-                    others:applyerInfo.others,
-                    week:applyerInfo.week,
-                    day:applyerInfo.day,
-                    skill:applyerInfo.skill,
-                    image:applyerInfo.image,
-                },
-            };
-            const resuls = await ApplyedTrainer.updateOne(filter,updateDoc,options);
-            res.send(resuls)
-        })
+        // app.post('/user/selectedpack', async(req,res) => {
+        //     const seletedInfo = req.body;
+        //     const resuls = await UserSelectedPack.insertOne(seletedInfo);
+        //     res.send(resuls)
+        // })
 
 
 
@@ -94,8 +77,59 @@ async function run() {
             const resuls = await TrainerProfile.findOne(query);
             res.send(resuls);
         })
+        app.get('/user/packages', async (req, res) => {
+            const result = await PackagePlans.find().toArray();
+            res.send(result)
+        })
 
 
+
+
+        app.put('/user/applytrainer', async (req, res) => {
+            const email = req.query.email;
+            const filter = {
+                email: email
+            }
+            const applyerInfo = req.body;
+            const options = {
+                upsert: true
+            };
+            const updateDoc = {
+                $set: {
+                    fullname: applyerInfo.fullname,
+                    email: applyerInfo.email,
+                    age: applyerInfo.age,
+                    others: applyerInfo.others,
+                    week: applyerInfo.week,
+                    day: applyerInfo.day,
+                    skill: applyerInfo.skill,
+                    image: applyerInfo.image,
+                },
+            };
+            const resuls = await ApplyedTrainer.updateOne(filter, updateDoc, options);
+            res.send(resuls)
+        })
+        app.put('/user/selectedpack', async (req, res) => {
+            const name = req.query.name;
+            const filter = {
+                name: name
+            }
+            const selectedPack = req.body;
+            const options = {
+                upsert: true
+            };
+            const updateDoc = {
+                $set: {
+                    name: selectedPack.name,
+                    features: selectedPack.features,
+                    facilities: selectedPack.facilities,
+                    image: selectedPack.image,
+                    joinNowButtonText:selectedPack.joinNowButtonText
+                },
+            };
+            const resuls = await UserSelectedPack.updateOne(filter, updateDoc, options);
+            res.send(resuls)
+        })
 
 
         await client.db("admin").command({
