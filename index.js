@@ -88,10 +88,14 @@ async function run() {
             const resuls = await ClassesCollection.findOne(query)
             res.send(resuls)
         })
+         app.get('/dashboard/subscriber', async (req, res) => {
+             const resuls = await UserSubscriber.find().toArray();
+             res.send(resuls)
+         })
 
 
 
-        
+
         app.put('/user/applytrainer', async (req, res) => {
             const email = req.query.email;
             const filter = {
