@@ -92,6 +92,21 @@ async function run() {
              const resuls = await UserSubscriber.find().toArray();
              res.send(resuls)
          })
+        app.get('/dashboard/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const resuls = await UserCollection.findOne(query);
+            res.send(resuls)
+        })
+        app.get('/dashboard/users', async (req, res) => {
+            const resuls = await UserCollection.find().toArray()
+            res.send(resuls)
+        })
+        app.get('/dashboard/appliedtrainer', async (req, res) => {
+            const resuls = await ApplyedTrainer.find().toArray()
+            res.send(resuls)
+        })
+        
 
 
 
@@ -141,6 +156,28 @@ async function run() {
             const resuls = await UserSelectedPack.updateOne(filter, updateDoc, options);
             res.send(resuls)
         })
+        app.patch('/dashboard/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = {
+                email : email
+            }
+            const options = {
+                upsert: true
+            };
+            const updateDoc = {
+                $set: {
+                    role:"admin"
+                }
+            }
+            const resuls = await UserCollection.updateOne(filter, updateDoc, options)
+            res.send(resuls)
+        })
+
+
+
+
+
+
 
 
         await client.db("admin").command({
