@@ -135,6 +135,26 @@ async function run() {
             const resuls = await ApplyedTrainer.updateOne(filter, updateDoc, options);
             res.send(resuls)
         })
+        // google login
+        app.put('/user', async (req, res) => {
+            const email = req.query.email;
+            const filter = {
+                email: email
+            }
+            const googleInfo = req.body;
+            const options = {
+                upsert: true
+            };
+            const updateDoc = {
+                $set: {
+                    email:googleInfo.email,
+                    image:googleInfo.photoURL,
+                    username:googleInfo.displayName,
+                },
+            };
+            const resuls = await UserCollection.updateOne(filter, updateDoc, options);
+            res.send(resuls)
+        })
         app.put('/user/selectedpack', async (req, res) => {
             const name = req.query.name;
             const filter = {
@@ -171,6 +191,36 @@ async function run() {
             }
             const resuls = await UserCollection.updateOne(filter, updateDoc, options)
             res.send(resuls)
+        })
+
+        app.patch('/dashboard/trainer/:email', async (req, res) => {
+            
+            const email = req.params.email;
+            const filter = {
+                email:email
+            }
+          
+            const updateDoc = {
+                $set: {
+                    role:"trainer"
+                }
+            }
+            const trainer = await ApplyedTrainer.updateOne(filter, updateDoc)
+            if (trainer) {
+                const query = {
+                    email: email
+                }
+                const user = await UserCollection.findOne(query);
+                const updateRole = {
+                    $set:{
+                        role:'trainer'
+                    }
+                }
+                const reuls = await UserCollection.updateOne(user, updateRole);
+                res.send(reuls);
+            }
+
+
         })
 
 
